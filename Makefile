@@ -13,9 +13,9 @@ run: ensure-dir traefik frps frpc postgres $(all)
 .PHONY: install
 install:
 	curl -fsSL https://get.docker.com | sh
-	sudo usermod -aG docker $(USER)
 	$(MAKE) install-docker-compose
-	$(MAKE) docker-network
+	sudo usermod -aG docker $(USER)
+	echo "docker and docker-compose installed, now you should exit and login again, then run 'make docker-network'"
 
 .PHONY: install-docker-compose
 install-docker-compose:
