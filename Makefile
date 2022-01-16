@@ -6,7 +6,7 @@ export COMPOSE_IGNORE_ORPHANS=True # ignore others container
 compose_version = v2.2.3
 
 all = gitea gogs mongo redis mysql influxdb filebrowser jupyter portainer drone-server drone-runner watchtower
-others = frps frpc netdata shadowsocks httpbin proxy phpmyadmin
+others = frps frpc netdata shadowsocks httpbin phpmyadmin
 
 run: ensure-dir traefik frps frpc postgres $(all)
 

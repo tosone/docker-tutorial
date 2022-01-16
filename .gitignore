@@ -7,6 +7,3 @@
 *.key
 
 data/
-
-registry/auth/htpasswd
-registry/config.yaml
