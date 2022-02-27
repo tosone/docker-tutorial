@@ -1,6 +1,48 @@
 version: "3.9"
 
 services:
+  traefik:
+    image: traefik:v2.6
+    container_name: traefik
+    hostname: traefik
+    restart: always
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.ssh.address=:22
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.influxdb.address=:2003
+      - --entrypoints.mysql.address=:3306
+      - --entrypoints.postgres.address=:5432
+      - --entrypoints.redis.address=:6379
+      - --entrypoints.mongo.address=:27017
+      - --providers.docker
+      - --api
+      - --certificatesresolvers.leresolver.acme.email=${LETSENCRYPT_EMAIL}
+      - --certificatesresolvers.leresolver.acme.tlschallenge=true
+      - --certificatesresolvers.leresolver.acme.caserver=${LETSENCRYPT_CASERVER}
+    ports:
+      - 80:80
+      - 22:22/tcp
+      - 443:443
+      - 2003:2003
+      - 3306:3306
+      - 5432:5432
+      - 6379:6379
+      - 27017:27017
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${VOLUME_PREFIX}/traefik/acme.json:/acme.json
+    labels:
+      - traefik.http.routers.traefik.rule=Host(`traefik${HOST_DOMAIN}`)
+      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.tls.certresolver=leresolver
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.middlewares=authtraefik
+      - traefik.http.middlewares.authtraefik.basicauth.users=tosone:$$apr1$$2DvxBXHm$$7iRM18fGqs30h2r0gDZK0/
+      - traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
+      - traefik.http.routers.http-catchall.entrypoints=web
+      - traefik.http.routers.http-catchall.middlewares=redirect-to-https
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
   gitea:
     image: gitea/gitea:latest
     container_name: gitea
@@ -370,6 +412,7 @@ services:
     networks:
       - default
     volumes:
+      - ${VOLUME_PREFIX}/registry:/var/lib/registry
       - $PWD/registry/auth:/etc/registry:ro
       - $PWD/registry/config.yaml:/etc/docker/registry/config.yml
     labels:
@@ -383,5 +426,4 @@ services:
       - redis
 networks:
   default:
-    external:
-      name: ${DOCKER_NETWORK:-webproxy}
+    name: ${DOCKER_NETWORK:-webproxy}

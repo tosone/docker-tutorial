@@ -75,5 +75,4 @@ services:
       - ${VOLUME_PREFIX}/etcd/etcd3:/etcd_data
 networks:
   default:
-    external:
-      name: ${DOCKER_NETWORK:-webproxy}
+    name: ${DOCKER_NETWORK:-webproxy}

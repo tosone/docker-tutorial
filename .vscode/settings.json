@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.yaml.sample": "yaml",
+        ".env.sample": "shellscript"
+    },
+}

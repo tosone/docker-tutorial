@@ -3,13 +3,9 @@ log:
   fields:
     service: registry
 storage:
-  oss:
-    accesskeyid: accesskeyid
-    accesskeysecret: accesskeysecret
-    region: region
-    endpoint: endpoint
-    internal: internal
-    bucket: bucket
+  filesystem:
+    rootdirectory: /var/lib/registry
+    maxthreads: 100
   cache:
     blobdescriptor: redis
 http:

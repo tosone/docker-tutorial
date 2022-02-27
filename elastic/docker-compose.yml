@@ -26,5 +26,4 @@ services:
       - elasticsearch
 networks:
   default:
-    external:
-      name: ${DOCKER_NETWORK:-webproxy}
+    name: ${DOCKER_NETWORK:-webproxy}
