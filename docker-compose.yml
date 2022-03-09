@@ -85,6 +85,22 @@ services:
       - traefik.http.routers.gogs.tls.certresolver=leresolver
       - traefik.http.services=gogs
       - traefik.http.services.gogs.loadbalancer.server.port=3000
+  minio:
+    image: minio/minio:RELEASE.2022-03-08T22-28-51Z
+    container_name: minio
+    hostname: minio
+    restart: always
+    environment:
+      - MINIO_ACCESS_KEY=${USERNAME}
+      - MINIO_SECRET_KEY=${SECRETPERSONAL}
+      - MINIO_REGION_NAME=cn-north-1
+    volumes:
+      - ${VOLUME_PREFIX}/minio:/data
+    command: server /data
+    networks:
+      - default
+    ports:
+      - 9100:9000
   drone-server:
     image: drone/drone:2
     container_name: drone-server
