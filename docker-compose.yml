@@ -275,7 +275,7 @@ services:
     hostname: redis
     command: redis-server --requirepass ${SECRETPERSONAL}
     volumes:
-      - ${VOLUME_PREFIX}/redis:/data
+      - ${REDIS_VOLUME_PREFIX}/redis:/data
     labels:
       - traefik.tcp.routers.redis.rule=HostSNI(`*`)
       - traefik.tcp.routers.redis.entrypoints=redis
