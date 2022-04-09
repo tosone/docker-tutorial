@@ -4,7 +4,7 @@ export $(shell sed 's/=.*//' .env)
 export COMPOSE_IGNORE_ORPHANS=True # ignore others container
 
 PROJECT_NAME=tutorial
-COMPOSE_VERSION=v2.2.3
+COMPOSE_VERSION=v2.4.1
 
 all = gitea gogs minio mongo redis mysql influxdb filebrowser jupyter portainer drone-server drone-runner watchtower
 others = frps frpc netdata shadowsocks httpbin phpmyadmin
