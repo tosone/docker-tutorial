@@ -23,3 +23,9 @@ After that you can connect this server with `ss://chacha20-ietf-poly1305:123456@
 |influxdb|8086|443|influxdb.tosone.cn|database|tosone|secret|
 |influxdb|2003|2003|influxdb.tosone.cn|-|-|-|
 |frps|9000|9000-10000|frp.tosone.cn|-|-|-|
+
+## Mongo Replica Set
+
+``` bash
+mongo "mongodb://tosone:secret@mongo.tosone.cn:30001,mongo.tosone.cn:30002,mongo.tosone.cn:30003/database?replicaSet=rs0&authMechanism=DEFAULT&authSource=database"
+```

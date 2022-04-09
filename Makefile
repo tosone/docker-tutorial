@@ -59,14 +59,14 @@ traefik:
 
 .PHONY: etcd
 etcd:
-	$(shell if [ ! -d $(VOLUME_PREFIX)/etcd/etcd1 ]; then mkdir -p $(VOLUME_PREFIX)/etcd/etcd1; fi)
-	$(shell if [ ! -d $(VOLUME_PREFIX)/etcd/etcd2 ]; then mkdir -p $(VOLUME_PREFIX)/etcd/etcd2; fi)
-	$(shell if [ ! -d $(VOLUME_PREFIX)/etcd/etcd3 ]; then mkdir -p $(VOLUME_PREFIX)/etcd/etcd3; fi)
+	if [ ! -d $(VOLUME_PREFIX)/$@/$@1 ]; then mkdir -p $(VOLUME_PREFIX)/$@/$@1; fi
+	if [ ! -d $(VOLUME_PREFIX)/$@/$@2 ]; then mkdir -p $(VOLUME_PREFIX)/$@/$@2; fi
+	if [ ! -d $(VOLUME_PREFIX)/$@/$@3 ]; then mkdir -p $(VOLUME_PREFIX)/$@/$@3; fi
 	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d
 
 .PHONY: elastic
 elastic:
-	$(shell if [ ! -d $(VOLUME_PREFIX)/elasticsearch ]; then mkdir -p $(VOLUME_PREFIX)/elasticsearch; fi)
+	if [ ! -d $(VOLUME_PREFIX)/$@ ]; then mkdir -p $(VOLUME_PREFIX)/$@; fi
 	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d
 
 .PHONY: registry
@@ -74,6 +74,11 @@ registry:
 	if [ ! -d $(VOLUME_PREFIX)/$@ ]; then mkdir -p $(VOLUME_PREFIX)/$@; fi
 	docker run --entrypoint htpasswd httpd:2 -Bbn $(USERNAME) $(SECRETPERSONAL) > registry/auth/htpasswd
 	docker-compose -p ${PROJECT_NAME} up --force-recreate -d $@
+
+.PHONY: mongo-rs
+mongo-rs:
+	if [ ! -d $(VOLUME_PREFIX)/$@ ]; then mkdir -p $(VOLUME_PREFIX)/$@; fi
+	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d
 
 .PHONY: stop
 stop:

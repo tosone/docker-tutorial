@@ -6,7 +6,7 @@ services:
     hostname: elasticsearch
     restart: always
     volumes:
-      - ${VOLUME_PREFIX}/elasticsearch:/usr/share/elasticsearch/data
+      - ${VOLUME_PREFIX}/elastic:/usr/share/elasticsearch/data
     networks:
       - default
     environment:

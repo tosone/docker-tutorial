@@ -235,7 +235,7 @@ services:
       - traefik.http.services=jupyter
       - traefik.http.services.jupyter.loadbalancer.server.port=8888
   mongo:
-    image: mongo:5
+    image: mongo:5.0.6-focal
     container_name: mongo
     restart: always
     hostname: mongodb
@@ -275,7 +275,7 @@ services:
     hostname: redis
     command: redis-server --requirepass ${SECRETPERSONAL}
     volumes:
-      - ${REDIS_VOLUME_PREFIX}/redis:/data
+      - ${VOLUME_PREFIX}/redis:/data
     labels:
       - traefik.tcp.routers.redis.rule=HostSNI(`*`)
       - traefik.tcp.routers.redis.entrypoints=redis

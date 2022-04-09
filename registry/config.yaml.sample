@@ -22,7 +22,7 @@ health:
     interval: 10s
     threshold: 3
 redis:
-  addr: localhost:6379
+  addr: redis:6379
   password: password
   db: 0
   dialtimeout: 3000ms
