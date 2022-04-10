@@ -26,6 +26,24 @@ After that you can connect this server with `ss://chacha20-ietf-poly1305:123456@
 
 ## Mongo Replica Set
 
+Generate file.key.
+
+``` bash
+openssl rand -base64 700 > file.key
+chmod 400 file.key
+sudo chown 999:999 file.key
+```
+
+Connect to the Mongo replica set.
+
 ``` bash
 mongo "mongodb://tosone:secret@mongo.tosone.cn:30001,mongo.tosone.cn:30002,mongo.tosone.cn:30003/database?replicaSet=rs0&authMechanism=DEFAULT&authSource=database"
+```
+
+## Jupyter Notebook Password
+
+``` python
+from jupyter_server.auth import passwd
+password = passwd()
+print(password)
 ```

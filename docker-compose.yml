@@ -231,14 +231,17 @@ services:
       - traefik.http.services=filebrowser
       - traefik.http.services.filebrowser.loadbalancer.server.port=80
   jupyter:
-    image: jupyter/datascience-notebook:latest
+    image: jupyter/all-spark-notebook:latest
     container_name: jupyter
     hostname: jupyter
     restart: always
+    command: start-notebook.sh --NotebookApp.password="argon2:$$argon2id$$v=19$$m=10240,t=10,p=8$$DoWuJUvwfEFvHC12Z1a+RA$$ml8/PgtpaS4j5jQVmt7x3RciG+stPAs5nrLXeJQpyAw"
     networks:
       - default
     volumes:
-      - ${VOLUME_PREFIX}/jupyter:/home/jovyan
+      - ${VOLUME_PREFIX}/jupyter:/home/${USERNAME}
+    environment:
+      - NB_USER=${USERNAME}
     labels:
       - traefik.http.routers.jupyter.rule=Host(`jupyter${HOST_DOMAIN}`)
       - traefik.http.routers.jupyter.entrypoints=websecure
