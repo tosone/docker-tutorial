@@ -94,13 +94,25 @@ services:
       - MINIO_ACCESS_KEY=${USERNAME}
       - MINIO_SECRET_KEY=${SECRETPERSONAL}
       - MINIO_REGION_NAME=cn-north-1
+      - MINIO_BROWSER_REDIRECT_URL=https://minio-console${HOST_DOMAIN}
     volumes:
       - ${VOLUME_PREFIX}/minio:/data
-    command: server /data
+    command: server /data --console-address=:9001
     networks:
       - default
-    ports:
-      - 9100:9000
+    labels:
+      - traefik.http.routers.minio.rule=Host(`minio${HOST_DOMAIN}`)
+      - traefik.http.routers.minio.entrypoints=websecure
+      - traefik.http.routers.minio.tls=true
+      - traefik.http.routers.minio.tls.certresolver=leresolver
+      - traefik.http.routers.minio.service=minio
+      - traefik.http.services.minio.loadbalancer.server.port=9000
+      - traefik.http.routers.minio-console.rule=Host(`minio-console${HOST_DOMAIN}`)
+      - traefik.http.routers.minio-console.entrypoints=websecure
+      - traefik.http.routers.minio-console.tls=true
+      - traefik.http.routers.minio-console.tls.certresolver=leresolver
+      - traefik.http.routers.minio-console.service=minio-console
+      - traefik.http.services.minio-console.loadbalancer.server.port=9001
   drone-server:
     image: drone/drone:2
     container_name: drone-server
@@ -407,7 +419,7 @@ services:
     ports:
       - ${SHADOWSOCKS_PORT}:${SHADOWSOCKS_PORT}
     labels:
-      - traefik.tcp.routers.ssproxy.rule=HostSNI(`ss${HOST_DOMAIN}`)
+      - traefik.enable=false
   shadowsocks:
     image: shadowsocks/shadowsocks-libev:latest
     container_name: shadowsocks
