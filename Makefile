@@ -6,7 +6,7 @@ export COMPOSE_IGNORE_ORPHANS=True # ignore others container
 PROJECT_NAME=tutorial
 COMPOSE_VERSION=v2.4.1
 
-all = gitea gogs minio mongo redis mysql influxdb filebrowser jupyter portainer drone-server drone-runner watchtower
+all = gitea gitea-new gogs minio mongo redis mysql influxdb filebrowser jupyter portainer drone-server drone-runner watchtower
 others = frps frpc netdata shadowsocks httpbin phpmyadmin
 
 run: ensure-dir traefik frps frpc postgres $(all)
@@ -62,12 +62,12 @@ etcd:
 	if [ ! -d $(VOLUME_PREFIX)/$@/$@1 ]; then mkdir -p $(VOLUME_PREFIX)/$@/$@1; fi
 	if [ ! -d $(VOLUME_PREFIX)/$@/$@2 ]; then mkdir -p $(VOLUME_PREFIX)/$@/$@2; fi
 	if [ ! -d $(VOLUME_PREFIX)/$@/$@3 ]; then mkdir -p $(VOLUME_PREFIX)/$@/$@3; fi
-	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d
+	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d etcd-1 etcd-2 etcd-3
 
 .PHONY: elastic
 elastic:
 	if [ ! -d $(VOLUME_PREFIX)/$@ ]; then mkdir -p $(VOLUME_PREFIX)/$@; fi
-	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d
+	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d elasticsearch kibana
 
 .PHONY: registry
 registry:
@@ -78,7 +78,12 @@ registry:
 .PHONY: mongo-rs
 mongo-rs:
 	if [ ! -d $(VOLUME_PREFIX)/$@ ]; then mkdir -p $(VOLUME_PREFIX)/$@; fi
-	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d
+	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d mongo-replica-setup mongo1 mongo2 mongo3
+
+.PHONY: minio-dm
+minio-dm:
+	if [ ! -d $(VOLUME_PREFIX)/$@ ]; then mkdir -p $(VOLUME_PREFIX)/$@; fi
+	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d minio-proxy minio1 minio2 minio3 minio4
 
 .PHONY: stop
 stop:

@@ -43,6 +43,29 @@ services:
       - traefik.http.routers.http-catchall.entrypoints=web
       - traefik.http.routers.http-catchall.middlewares=redirect-to-https
       - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+  gitea-new:
+    image: gitea/gitea:1.16-rootless
+    container_name: gitea-new
+    hostname: gitea-new
+    restart: always
+    volumes:
+      - ${VOLUME_PREFIX}/gitea-new/data:/var/lib/gitea
+      - ${VOLUME_PREFIX}/gitea-new/config:/etc/gitea
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - default
+    labels:
+      - traefik.http.routers.git-new.rule=Host(`git-new${HOST_DOMAIN}`)
+      - traefik.http.routers.git-new.entrypoints=websecure
+      - traefik.http.routers.git-new.tls=true
+      - traefik.http.routers.git-new.tls.certresolver=leresolver
+      - traefik.http.services=git-new
+      - traefik.http.services.git-new.loadbalancer.server.port=3000
+    depends_on:
+      - minio
+      - postgres
+      - redis
   gitea:
     image: gitea/gitea:1.16
     container_name: gitea
