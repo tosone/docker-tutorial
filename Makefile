@@ -6,7 +6,7 @@ export COMPOSE_IGNORE_ORPHANS=True # ignore others container
 PROJECT_NAME=tutorial
 COMPOSE_VERSION=v2.4.1
 
-all = gitea gitea-new gogs minio mongo redis mysql influxdb filebrowser jupyter portainer drone-server drone-runner watchtower
+all = gitea gogs mongo redis mysql influxdb filebrowser jupyter portainer drone-server drone-runner watchtower
 others = frps frpc netdata shadowsocks httpbin phpmyadmin
 
 run: ensure-dir traefik frps frpc postgres $(all)
@@ -80,8 +80,8 @@ mongo-rs:
 	if [ ! -d $(VOLUME_PREFIX)/$@ ]; then mkdir -p $(VOLUME_PREFIX)/$@; fi
 	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d mongo-replica-setup mongo1 mongo2 mongo3
 
-.PHONY: minio-dm
-minio-dm:
+.PHONY: minio
+minio:
 	if [ ! -d $(VOLUME_PREFIX)/$@ ]; then mkdir -p $(VOLUME_PREFIX)/$@; fi
 	cd $@ && docker-compose -p ${PROJECT_NAME} up --force-recreate -d minio-proxy minio1 minio2 minio3 minio4
 

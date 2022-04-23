@@ -3,6 +3,7 @@ version: "3.9"
 x-minio-common: &minio-common
   image: quay.io/minio/minio:RELEASE.2022-04-09T15-09-52Z
   command: server --console-address ":9001" http://minio{1...4}/data{1...4}
+  restart: always
   expose:
     - "9000"
     - "9001"
@@ -64,6 +65,7 @@ services:
     image: nginx:stable-alpine
     hostname: minio-proxy
     container_name: minio-proxy
+    restart: always
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     expose:
