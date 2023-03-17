@@ -1,7 +1,7 @@
 version: "3.9"
 
 x-minio-common: &minio-common
-  image: quay.io/minio/minio:RELEASE.2022-04-09T15-09-52Z
+  image: quay.io/minio/minio:RELEASE.2023-03-13T19-46-17Z
   command: server --console-address ":9001" http://minio{1...4}/data{1...4}
   restart: always
   expose:
@@ -26,40 +26,40 @@ services:
     hostname: minio1
     container_name: minio1
     volumes:
-      - ${VOLUME_PREFIX}/minio-dm/data1-1:/data1
-      - ${VOLUME_PREFIX}/minio-dm/data1-2:/data2
-      - ${VOLUME_PREFIX}/minio-dm/data1-3:/data3
-      - ${VOLUME_PREFIX}/minio-dm/data1-4:/data4
+      - ${VOLUME_PREFIX}/minio/data1-1:/data1
+      - ${VOLUME_PREFIX}/minio/data1-2:/data2
+      - ${VOLUME_PREFIX}/minio/data1-3:/data3
+      - ${VOLUME_PREFIX}/minio/data1-4:/data4
 
   minio2:
     <<: *minio-common
     hostname: minio2
     container_name: minio2
     volumes:
-      - ${VOLUME_PREFIX}/minio-dm/data2-1:/data1
-      - ${VOLUME_PREFIX}/minio-dm/data2-2:/data2
-      - ${VOLUME_PREFIX}/minio-dm/data2-3:/data3
-      - ${VOLUME_PREFIX}/minio-dm/data2-4:/data4
+      - ${VOLUME_PREFIX}/minio/data2-1:/data1
+      - ${VOLUME_PREFIX}/minio/data2-2:/data2
+      - ${VOLUME_PREFIX}/minio/data2-3:/data3
+      - ${VOLUME_PREFIX}/minio/data2-4:/data4
 
   minio3:
     <<: *minio-common
     hostname: minio3
     container_name: minio3
     volumes:
-      - ${VOLUME_PREFIX}/minio-dm/data3-1:/data1
-      - ${VOLUME_PREFIX}/minio-dm/data3-2:/data2
-      - ${VOLUME_PREFIX}/minio-dm/data3-3:/data3
-      - ${VOLUME_PREFIX}/minio-dm/data3-4:/data4
+      - ${VOLUME_PREFIX}/minio/data3-1:/data1
+      - ${VOLUME_PREFIX}/minio/data3-2:/data2
+      - ${VOLUME_PREFIX}/minio/data3-3:/data3
+      - ${VOLUME_PREFIX}/minio/data3-4:/data4
 
   minio4:
     <<: *minio-common
     hostname: minio4
     container_name: minio4
     volumes:
-      - ${VOLUME_PREFIX}/minio-dm/data4-1:/data1
-      - ${VOLUME_PREFIX}/minio-dm/data4-2:/data2
-      - ${VOLUME_PREFIX}/minio-dm/data4-3:/data3
-      - ${VOLUME_PREFIX}/minio-dm/data4-4:/data4
+      - ${VOLUME_PREFIX}/minio/data4-1:/data1
+      - ${VOLUME_PREFIX}/minio/data4-2:/data2
+      - ${VOLUME_PREFIX}/minio/data4-3:/data3
+      - ${VOLUME_PREFIX}/minio/data4-4:/data4
 
   minio-proxy:
     image: nginx:stable-alpine

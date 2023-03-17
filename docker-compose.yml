@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   traefik:
-    image: traefik:v2.7
+    image: traefik:v2.9
     container_name: traefik
     hostname: traefik
     restart: always
@@ -43,32 +43,8 @@ services:
       - traefik.http.routers.http-catchall.entrypoints=web
       - traefik.http.routers.http-catchall.middlewares=redirect-to-https
       - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
-  gitea-new:
-    image: gitea/gitea:1.16-rootless
-    container_name: gitea-new
-    hostname: gitea-new
-    restart: always
-    volumes:
-      - ${VOLUME_PREFIX}/gitea-new/data:/var/lib/gitea
-      - ${VOLUME_PREFIX}/gitea-new/config:/etc/gitea
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - default
-    labels:
-      - traefik.http.routers.git-new.rule=Host(`git-new${HOST_DOMAIN}`)
-      - traefik.http.routers.git-new.entrypoints=websecure
-      - traefik.http.routers.git-new.tls=true
-      - traefik.http.routers.git-new.tls.certresolver=leresolver
-      - traefik.http.services=git-new
-      - traefik.http.services.git-new.loadbalancer.server.port=3000
-    depends_on:
-      - minio
-      - postgres
-      - redis
-      - traefik
   gitea:
-    image: gitea/gitea:1.16
+    image: gitea/gitea:1.18
     container_name: gitea
     hostname: gitea
     environment:
@@ -142,7 +118,6 @@ services:
       - traefik.http.services=drone
       - traefik.http.services.drone.loadbalancer.server.port=80
     depends_on:
-      - minio
       - postgres
   drone-runner:
     image: drone/drone-runner-docker:1
@@ -305,7 +280,7 @@ services:
       - traefik.tcp.routers.redis.service=redis-svc
       - traefik.tcp.services.redis-svc.loadbalancer.server.port=6379
   postgres:
-    image: postgres:alpine
+    image: postgres:15-alpine
     container_name: postgres
     hostname: postgres
     restart: always
@@ -314,9 +289,9 @@ services:
       - POSTGRES_PASSWORD=${SECRETPERSONAL}
       - POSTGRES_DB=${DATABASE_NAME}
     volumes:
-      - ${VOLUME_PREFIX}/postgres:/var/lib/postgresql/data
-      - ${VOLUME_PREFIX}/key/postgres/server.crt:/var/lib/postgresql/server.crt:ro
-      - ${VOLUME_PREFIX}/key/postgres/server.key:/var/lib/postgresql/server.key:ro
+      - ${VOLUME_PREFIX}/postgres/data:/var/lib/postgresql/data
+      - ${VOLUME_PREFIX}/postgres/key/server.crt:/var/lib/postgresql/server.crt:ro
+      - ${VOLUME_PREFIX}/postgres/key/server.key:/var/lib/postgresql/server.key:ro
     command:
       [
         "postgres",

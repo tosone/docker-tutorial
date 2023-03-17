@@ -4,7 +4,7 @@ export $(shell sed 's/=.*//' .env)
 export COMPOSE_IGNORE_ORPHANS=True # ignore others container
 
 PROJECT_NAME=tutorial
-COMPOSE_VERSION=v2.4.1
+COMPOSE_VERSION=v2.16.0
 
 all = gitea gogs mongo redis mysql influxdb filebrowser jupyter portainer drone-server drone-runner watchtower
 others = frps frpc netdata shadowsocks httpbin phpmyadmin
@@ -45,9 +45,10 @@ shadowsocks-proxy:
 postgres: ensure-dir
 	cd $@ && sh gen.sh
 	if [ ! -d $(VOLUME_PREFIX)/$@ ]; then mkdir -p $(VOLUME_PREFIX)/$@; fi
-	if [ ! -d ${VOLUME_PREFIX}/key ]; then mkdir -p ${VOLUME_PREFIX}/key; fi
-	sudo cp -r $@ ${VOLUME_PREFIX}/key
-	cd ${VOLUME_PREFIX}/key/$@ && sudo chmod 640 server.key && sudo chown 0:70 server.key
+	if [ ! -d $(VOLUME_PREFIX)/$@/data ]; then mkdir -p $(VOLUME_PREFIX)/$@/data; fi
+	if [ ! -d ${VOLUME_PREFIX}/$@/key ]; then mkdir -p ${VOLUME_PREFIX}/$@/key; fi
+	sudo cp -r $@/* ${VOLUME_PREFIX}/$@/key
+	cd ${VOLUME_PREFIX}/$@/key && sudo chmod 600 server.key && sudo chown 70:70 server.key
 	docker-compose -p ${PROJECT_NAME} up --force-recreate -d $@
 
 .PHONY: traefik
