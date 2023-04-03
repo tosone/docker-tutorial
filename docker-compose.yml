@@ -15,6 +15,7 @@ services:
       - --entrypoints.postgres.address=:5432
       - --entrypoints.redis.address=:6379
       - --entrypoints.mongo.address=:27017
+      - --entrypoints.clickhouse.address=:9000
       - --providers.docker
       - --api
       - --certificatesresolvers.leresolver.acme.email=${LETSENCRYPT_EMAIL}
@@ -29,6 +30,7 @@ services:
       - 5432:5432
       - 6379:6379
       - 27017:27017
+      - 9000:9000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${VOLUME_PREFIX}/traefik/acme.json:/acme.json
@@ -44,12 +46,13 @@ services:
       - traefik.http.routers.http-catchall.middlewares=redirect-to-https
       - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
   gitea:
-    image: gitea/gitea:1.18
+    image: gitea/gitea:1.19
     container_name: gitea
     hostname: gitea
     environment:
       - USER_UID=1000
       - USER_GID=1000
+      - GNUPGHOME=/data/home/.gnupg
     restart: always
     volumes:
       - ${VOLUME_PREFIX}/gitea:/data
@@ -438,6 +441,34 @@ services:
       - traefik.http.services.registry.loadbalancer.server.port=5000
     depends_on:
       - redis
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.2.5-alpine
+    container_name: clickhouse
+    restart: always
+    hostname: clickhouse
+    environment:
+      - CLICKHOUSE_USER=${USERNAME}
+      - CLICKHOUSE_PASSWORD=${SECRETPERSONAL}
+      - CLICKHOUSE_DB=${DATABASE_NAME}
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - default
+    volumes:
+      - ${VOLUME_PREFIX}/clickhouse:/var/lib/clickhouse
+    labels:
+      - traefik.http.routers.clickhouse.rule=Host(`clickhouse${HOST_DOMAIN}`)
+      - traefik.http.routers.clickhouse.entrypoints=websecure
+      - traefik.http.routers.clickhouse.tls=true
+      - traefik.http.routers.clickhouse.tls.certresolver=leresolver
+      - traefik.http.services=clickhouse
+      - traefik.http.services.clickhouse.loadbalancer.server.port=8123
+      - traefik.tcp.routers.clickhouse.rule=HostSNI(`*`)
+      - traefik.tcp.routers.clickhouse.entrypoints=clickhouse
+      - traefik.tcp.routers.clickhouse.service=clickhouse-svc
+      - traefik.tcp.services.clickhouse-svc.loadbalancer.server.port=9000
 networks:
   default:
     name: ${DOCKER_NETWORK:-webproxy}

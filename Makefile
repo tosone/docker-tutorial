@@ -6,7 +6,7 @@ export COMPOSE_IGNORE_ORPHANS=True # ignore others container
 PROJECT_NAME=tutorial
 COMPOSE_VERSION=v2.16.0
 
-all = gitea gogs mongo redis mysql influxdb filebrowser jupyter portainer drone-server drone-runner watchtower
+all = gitea gogs mongo redis mysql influxdb filebrowser jupyter portainer drone-server drone-runner watchtower clickhouse
 others = frps frpc netdata shadowsocks httpbin phpmyadmin
 
 run: ensure-dir traefik frps frpc postgres $(all)
