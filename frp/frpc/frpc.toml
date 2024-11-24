@@ -1,0 +1,9 @@
+serverAddr = "SERVER_ADDR"
+serverPort = "SERVER_PORT"
+
+[[proxies]]
+name = "CLIENT_NAME"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = "LOCAL_PORT"
+remotePort = "REMOTE_PORT"
